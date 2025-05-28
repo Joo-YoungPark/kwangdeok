@@ -1,0 +1,27 @@
+.header {
+    background-color: #4fc3f7;
+    color: white;
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.user-info {
+    font-size: 13px;
+    text-align: right;
+    line-height: 1.2;
+}
+
+@media (max-width: 768px) {
+
+    .header {
+        background-color: #4fc3f7;
+        color: white;
+        padding: 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+}
