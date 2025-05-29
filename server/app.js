@@ -8,6 +8,10 @@ const port = 3001;
 app.use(cors());
 app.use(express.json());
 
+// admin 라우터 추가
+const adminRouter = require("./admin"); 
+app.use("/api/admin", adminRouter); 
+
 // 로그인
 app.post('/api/login', async (req, res) => {
     const { id, password } = req.body;
