@@ -48,8 +48,10 @@ router.post("/saveRecord", async (req, res) => {
 
 // 사원 목록
 router.get("/getMemberList", async (req, res) => {
-  const { searchType, searchKeyword } = req.query;
+  const { searchType, searchKeyword, page = 1, size = 5 } = req.query;
 
+  const offset = (page - 1) * size;
+  const limit = parseInt(size);
 
   let sql = `SELECT member_id, name, member_no,
                     CASE WHEN handle = 1 THEN '우궁'
@@ -77,12 +79,15 @@ router.get("/getMemberList", async (req, res) => {
     params.push(`%${searchKeyword}%`);
   }
   
-  sql += ` ORDER BY member_id`;
+  sql += ` ORDER BY member_id LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
+  params.push(limit, offset);
 
-  console.log(sql)
   try {
     const result = await pool.query(sql, params);
-    res.json({ success: true, members: result.rows });
+    const countResult = await pool.query(`SELECT COUNT(*) FROM member WHERE 1=1 AND member_no != '000000'`);
+    const totalCount = parseInt(countResult.rows[0].count);
+
+    res.json({ success: true, members: result.rows, totalCount });
   } catch (err) {
     console.error("회원 목록 조회 오류:", err);
     res.status(500).json({ success: false, message: "DB 오류" });

@@ -135,8 +135,7 @@
 
 .pagination button:disabled {
     color: #aaa;
-    
-    cursor: not-allowed;
+    cursor: pointer;
 }
 
 .active-page {

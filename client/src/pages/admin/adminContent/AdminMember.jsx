@@ -17,18 +17,33 @@ function AdminMember() {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editMemberData, setEditMemberData] = useState(null);
 
+  const [page, setPage] = useState(1);
+  const [size] = useState(10);
+  const [totalCount, setTotalCount] = useState(0);
+
+  const pagesPerGroup = 5;
+  const totalPages = Math.ceil(totalCount / size);
+  const currentGroup = Math.floor((page - 1) / pagesPerGroup);
+  const groupStart = currentGroup * pagesPerGroup + 1;
+  const groupEnd = Math.min(groupStart + pagesPerGroup - 1, totalPages);
+
   useEffect(() => {
     searchMemberList();
-  }, []);
+  }, [page]);
+
+  const goToPage = (p) => {
+    if (p >= 1 && p <= totalPages) setPage(p);
+  };
 
   /* 사원 리스트 불러오기 */
   const searchMemberList = async () => {
     try {
       const res = await axios.get("/api/admin/getMemberList", {
-        params: { searchType, searchKeyword },
+        params: { page, size, searchType, searchKeyword },
       });
       if (res.data.success) {
         setMembers(res.data.members);
+        setTotalCount(res.data.totalCount);
       }
     } catch (err) {
       console.error("회원 목록 불러오기 실패:", err);
@@ -199,6 +214,41 @@ function AdminMember() {
                 ))}
               </tbody>
             </table>
+          </div>
+          {/* 페이징 영역 */}
+          <div className={adminMemberStyle["pagination"]}>
+            <button onClick={() => goToPage(1)} disabled={page === 1}>
+              ⏮ 첫페이지
+            </button>
+            <button onClick={() => goToPage(page - 1)} disabled={page === 1}>
+              ◀ 이전
+            </button>
+
+            {Array.from({ length: groupEnd - groupStart + 1 }, (_, i) => {
+              const p = groupStart + i;
+              return (
+                <button
+                  key={p}
+                  onClick={() => goToPage(p)}
+                  className={page === p ? adminMemberStyle["active-page"] : ""}
+                >
+                  {p}
+                </button>
+              );
+            })}
+
+            <button
+              onClick={() => goToPage(page + 1)}
+              disabled={page === totalPages}
+            >
+              다음 ▶
+            </button>
+            <button
+              onClick={() => goToPage(totalPages)}
+              disabled={page === totalPages}
+            >
+              마지막 ⏭
+            </button>
           </div>
         </div>
       </div>
