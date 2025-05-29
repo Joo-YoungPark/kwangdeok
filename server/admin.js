@@ -86,4 +86,26 @@ router.get("/getMemberList", async (req, res) => {
     res.status(500).json({ success: false, message: "DB 오류" });
   }
 });
+
+router.post("/registMember", async (req, res) => {
+  const { memberNo, name, password, role, handle } = req.body;
+  console.log("받은 가입 요청:", memberNo, name, password, role, handle);
+
+  if (!name || !handle || !role || !memberNo) {
+    return res.status(400).json({ message: "필수 항목 누락" });
+  }
+
+  try {
+    const hashedPw = await bcrypt.hash(password, 10); // saltRounds = 10
+    const result = await pool.query(
+      "INSERT INTO member (member_id, member_no, name, password, role, handle) VALUES (nextval('seq_id'), $1, $2, $3, $4, $5) RETURNING *",
+      [memberNo, name, hashedPw, role, handle]
+    );
+
+    res.json({ success: true, member: result.rows[0] });
+  } catch (err) {
+    console.error("DB 오류:", err);
+    res.status(500).json({ success: false, message: "서버 오류" });
+  }
+});
 module.exports = router;

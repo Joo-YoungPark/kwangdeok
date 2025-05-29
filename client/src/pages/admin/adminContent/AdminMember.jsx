@@ -3,11 +3,15 @@ import axios from "axios";
 import adminMemberStyle from "./AdminMember.module.css";
 import { BiDetail } from "react-icons/bi"; // npm install react-icons
 
+import RegistModal from "./RegistMemberPop.jsx";
+
 function AdminMember() {
   const [searchType, setSearchType] = useState("all");
   const [searchKeyword, setSearchKeyword] = useState("");
 
   const [members, setMembers] = useState([]);
+  const [checked, setChecked] = useState([]);
+  const [registModalOpen, setRegistModalOpen] = useState(false);
 
   useEffect(() => {
     searchMemberList();
@@ -25,6 +29,13 @@ function AdminMember() {
     } catch (err) {
       console.error("회원 목록 불러오기 실패:", err);
     }
+  };
+
+  /* 사원 등록 팝업 오픈 */
+  const registMember = () => setRegistModalOpen(true);
+  const closeModal = () => {
+    setRegistModalOpen(false);
+    searchMemberList();
   };
 
   return (
@@ -60,7 +71,7 @@ function AdminMember() {
           </div>
           {/* 버튼 영역 */}
           <div className={adminMemberStyle["btn-area"]}>
-            <button>등록</button>
+            <button onClick={() => registMember()}>등록</button>
             <button>삭제</button>
             <button>수정</button>
           </div>
@@ -79,7 +90,19 @@ function AdminMember() {
               </colgroup>
               <thead>
                 <tr>
-                  <th>체크박스</th>
+                  <th>
+                    <input
+                      type="checkbox"
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          const allIds = members.map((m) => m.member_id);
+                          setChecked(allIds);
+                        } else {
+                          setChecked([]);
+                        }
+                      }}
+                    />
+                  </th>
                   <th>이름</th>
                   <th>사원번호</th>
                   <th>직책</th>
@@ -91,7 +114,21 @@ function AdminMember() {
               <tbody>
                 {members.map((m) => (
                   <tr key={m.member_id}>
-                    <td>체크박스</td>
+                    <td>
+                      <input
+                        type="checkbox"
+                        checked={checked.includes(m.member_id)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setChecked((prev) => [...prev, m.member_id]);
+                          } else {
+                            setChecked((prev) =>
+                              prev.filter((id) => id !== m.member_id)
+                            );
+                          }
+                        }}
+                      />
+                    </td>
                     <td>{m.name}</td>
                     <td>{m.member_no}</td>
                     <td>{m.role}</td>
@@ -109,6 +146,7 @@ function AdminMember() {
           </div>
         </div>
       </div>
+      {registModalOpen && <RegistModal onClose={closeModal} />}
     </div>
   );
 }
