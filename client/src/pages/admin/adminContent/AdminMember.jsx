@@ -5,6 +5,7 @@ import { BiDetail } from "react-icons/bi"; // npm install react-icons
 
 import RegistModal from "./RegistMemberPop.jsx";
 import EditModal from "./EditMemberPop.jsx";
+import MonthModal from "./MonthDataPop.jsx";
 
 function AdminMember() {
   const [searchType, setSearchType] = useState("all");
@@ -14,8 +15,13 @@ function AdminMember() {
   const [checked, setChecked] = useState([]);
 
   const [registModalOpen, setRegistModalOpen] = useState(false);
+
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editMemberData, setEditMemberData] = useState(null);
+
+  const [monthModalOpen, setMonthModalOpen] = useState(false);
+  const [setMonthData] = useState(null);
+  const [memberId, setMemberId] = useState("");
 
   const [page, setPage] = useState(1);
   const [size] = useState(10);
@@ -53,7 +59,7 @@ function AdminMember() {
   /* 사원 등록 팝업 오픈 */
   const registMember = () => setRegistModalOpen(true);
   // 사원 등록 팝업 닫기
-  const closeModal = () => {
+  const closeRegistModal = () => {
     setRegistModalOpen(false);
     searchMemberList();
   };
@@ -106,6 +112,18 @@ function AdminMember() {
   const onCloseEditModal = () => {
     setEditModalOpen(false);
     setEditMemberData(null);
+    searchMemberList();
+  };
+
+  /* 월별 보기 팝업 오픈픈 */
+  const viewMonth = (id) => {
+    setMemberId(id);
+    setMonthModalOpen(true);
+  };
+
+  // 월별 보기 팝업 닫기
+  const onCloseMonthModal = () => {
+    setMonthModalOpen(false);
     searchMemberList();
   };
 
@@ -206,7 +224,7 @@ function AdminMember() {
                     <td>{m.handle}</td>
                     <td>{m.avg_score?.toFixed(2) ?? "-"}</td>
                     <td>
-                      <button>
+                      <button onClick={() => viewMonth(m.member_id)}>
                         <BiDetail size={15} />
                       </button>
                     </td>
@@ -252,9 +270,15 @@ function AdminMember() {
           </div>
         </div>
       </div>
-      {registModalOpen && <RegistModal onClose={closeModal} />}
+      {registModalOpen && <RegistModal onClose={closeRegistModal} />}
       {editModalOpen && (
         <EditModal member={editMemberData} onClose={onCloseEditModal} />
+      )}
+      {monthModalOpen && (
+        <MonthModal
+          data={{ id: memberId }}
+          onClose={() => onCloseMonthModal(false)}
+        />
       )}
     </div>
   );

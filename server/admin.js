@@ -193,4 +193,41 @@ router.post("/editMember", async (req, res) => {
     res.status(500).json({ message: "서버 오류" });
   }
 })
+
+// 사원 월별 시수
+router.post("/getMonthScore", async (req, res) => {
+  const { id, yearRange } = req.body;
+
+  console.log(id, yearRange)
+
+  let month = "";
+  let monthList = [2024, 2025];
+
+  for(let i=yearRange[0]; i<=yearRange[yearRange.length-1]; i++){
+    month += `, COALESCE(ROUND(AVG(avg_score::numeric) FILTER (WHERE g_year = ${i}), 2), 0) AS "${i}"`;
+  }  
+
+  const query = `
+    SELECT
+      concat(cast(m as text) || '월') AS "month"
+      ${month}
+    FROM (
+      SELECT g_year, g_month, avg_score
+      FROM game_score
+      WHERE member_id = $1
+    ) AS gs
+     RIGHT JOIN GENERATE_SERIES(1, 12) AS m(g_month) ON gs.g_month = m
+    GROUP BY m
+    ORDER BY m;
+  `;
+
+  try{
+    const result = await pool.query(query, [id]);
+
+    res.json({ success: true, list: result.rows });
+  }catch(err){
+    console.error("오류");
+    res.status(500).json({ message: "서버 오류" });
+  }
+})
 module.exports = router;
