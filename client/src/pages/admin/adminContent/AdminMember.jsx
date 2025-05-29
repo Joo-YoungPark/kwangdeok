@@ -1,10 +1,31 @@
 import React, { useEffect, useState } from "react";
-
+import axios from "axios";
 import adminMemberStyle from "./AdminMember.module.css";
+import { BiDetail } from "react-icons/bi"; // npm install react-icons
 
 function AdminMember() {
   const [searchType, setSearchType] = useState("all");
   const [searchKeyword, setSearchKeyword] = useState("");
+
+  const [members, setMembers] = useState([]);
+
+  useEffect(() => {
+    searchMemberList();
+  }, []);
+
+  /* 사원 리스트 불러오기 */
+  const searchMemberList = async () => {
+    try {
+      const res = await axios.get("/api/admin/getMemberList", {
+        params: { searchType, searchKeyword },
+      });
+      if (res.data.success) {
+        setMembers(res.data.members);
+      }
+    } catch (err) {
+      console.error("회원 목록 불러오기 실패:", err);
+    }
+  };
 
   return (
     <div className="record-page">
@@ -33,7 +54,7 @@ function AdminMember() {
                 ></input>
               </div>
               <div className={adminMemberStyle["search-btn-area"]}>
-                <button>검색</button>
+                <button onClick={searchMemberList}>검색</button>
               </div>
             </div>
           </div>
@@ -67,7 +88,23 @@ function AdminMember() {
                   <th>월별보기</th>
                 </tr>
               </thead>
-              <tbody></tbody>
+              <tbody>
+                {members.map((m) => (
+                  <tr key={m.member_id}>
+                    <td>체크박스</td>
+                    <td>{m.name}</td>
+                    <td>{m.member_no}</td>
+                    <td>{m.role}</td>
+                    <td>{m.handle}</td>
+                    <td>{m.avg_score?.toFixed(2) ?? "-"}</td>
+                    <td>
+                      <button>
+                        <BiDetail size={15} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
             </table>
           </div>
         </div>

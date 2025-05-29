@@ -46,4 +46,44 @@ router.post("/saveRecord", async (req, res) => {
   }
 })
 
+router.get("/getMemberList", async (req, res) => {
+  const { searchType, searchKeyword } = req.query;
+
+
+  let sql = `SELECT member_id, name, member_no,
+                    CASE WHEN handle = 1 THEN '우궁'
+                         WHEN handle = -1 THEN '좌궁' ELSE '-' END AS handle,
+                    avg_score, role
+              FROM member
+              WHERE 1=1 AND member_no != '000000'`;
+  const params = [];
+
+  if(searchType === 'all'){
+    sql += "AND (name ILIKE $" + (params.length + 1);
+    params.push(`%${searchKeyword}%`)
+    sql += " OR member_no ILIKE $" + (params.length + 1);
+    params.push(`%${searchKeyword}%`)
+    sql += " OR member_no ILIKE $" + (params.length + 1) + ")";
+    params.push(`%${searchKeyword}%`)
+  }else if(searchType === 'name'){
+    sql += " AND name ILIKE $" + (params.length + 1);
+    params.push(`%${searchKeyword}%`);
+  }else if(searchType === 'memberNo'){
+    sql += " AND member_no ILIKE $" + (params.length + 1);
+    params.push(`%${searchKeyword}%`);
+  }else if(searchType === 'memberNo'){
+    sql += " AND role ILIKE $" + (params.length + 1);
+    params.push(`%${searchKeyword}%`);
+  }
+  
+  sql += ` ORDER BY member_id`;
+
+  try {
+    const result = await pool.query(sql, params);
+    res.json({ success: true, members: result.rows });
+  } catch (err) {
+    console.error("회원 목록 조회 오류:", err);
+    res.status(500).json({ success: false, message: "DB 오류" });
+  }
+});
 module.exports = router;
