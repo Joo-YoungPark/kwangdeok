@@ -12,6 +12,10 @@ app.use(express.json());
 const adminRouter = require("./admin"); 
 app.use("/api/admin", adminRouter); 
 
+// user 라우터 추가
+const userRouter = require("./user"); 
+app.use("/api/user", userRouter); 
+
 // 로그인
 app.post('/api/login', async (req, res) => {
     const { id, password } = req.body;

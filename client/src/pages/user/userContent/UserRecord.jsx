@@ -11,6 +11,54 @@ function UserRecord() {
 
   const [rows, setRows] = useState([]);
 
+  /* 사용자 오늘의 시수 */
+  useEffect(() => {
+    getMemberScore(startDate);
+  }, [startDate]);
+
+  const getMemberScore = async (startDate) => {
+    try {
+      const res = await axios.post("/api/user/getMemberScore", {
+        id: localStorage.getItem("member_id"),
+        date: format(startDate, "yyyy-MM-dd"),
+      });
+
+      if (res.data.success) {
+        console.log("성공");
+        displayScoreTable(res.data.result);
+      } else {
+        console.log("실패", res.data);
+      }
+    } catch (err) {
+      console.error("에러 발생:", err);
+    }
+  };
+
+  /* 사용자 시수 테이블 적용 */
+  const displayScoreTable = (list) => {
+    const wrapped = Array.isArray(list) ? list : [list];
+
+    const newRows = wrapped.map((item, idx) => {
+      const shots = [
+        item.record_1 === 1 ? "中" : "✗",
+        item.record_2 === 1 ? "中" : "✗",
+        item.record_3 === 1 ? "中" : "✗",
+        item.record_4 === 1 ? "中" : "✗",
+        item.record_5 === 1 ? "中" : "✗",
+      ];
+      return {
+        round: `${idx + 1}巡`,
+        shots,
+        score: `${item.totalscore}中`,
+      };
+    });
+    setRows(newRows);
+  };
+
+  const changeDate = (date) => {
+    getMemberScore(format(date, "yyyy-MM-dd"));
+  };
+
   /* 행 추가 */
   const addRow = () => {
     setRows((prevRows) => {
@@ -87,6 +135,39 @@ function UserRecord() {
     );
   };
 
+  const saveRecord = async () => {
+    const data = {
+      date: format(startDate, "yyyy-MM-dd"), // 선택한 날짜
+      totalScore,
+      totalArrows,
+      avgScore,
+      records: rows.map((row) => ({
+        round: row.round.replace("巡", ""),
+        shots: row.shots,
+        score: row.score.replace("中", ""),
+      })),
+    };
+
+    console.log(data);
+    if (localStorage.getItem("member_id") === null) {
+      alert("로그인 정보가 없습니다. 다시 로그인해주세요.");
+      return;
+    }
+
+    try {
+      const res = await axios.post("/api/user/saveUserRecord", {
+        data,
+        member_id: localStorage.getItem("member_id"),
+      });
+      if (res.data.success) {
+        alert("저장되었습니다.");
+        setStartDate(new Date());
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <div className={userRecordStyle["record-page"]}>
       <div className={userRecordStyle["record-container"]}>
@@ -97,11 +178,12 @@ function UserRecord() {
               selected={startDate}
               dateFormat="yyyy-MM-dd"
               onChange={(date) => {
+                changeDate(date);
                 setStartDate(date);
               }}
               locale={ko}
               className="custom-input"
-              maxDate={startDate}
+              maxDate={new Date()}
               calendarClassName="custom-calendar"
             />
           </div>
@@ -119,7 +201,9 @@ function UserRecord() {
           </p>
         </div>
         <div className={userRecordStyle["record-save"]}>
-          <button className="btn">저장</button>
+          <button className="btn" onClick={saveRecord}>
+            저장
+          </button>
         </div>
       </div>
 
