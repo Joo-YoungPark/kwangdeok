@@ -23,6 +23,33 @@ function UserCalendar() {
   const [selectedColor, setSelectedColor] = useState("#36c");
   const [modify, setModify] = useState(null);
 
+  useEffect(() => {
+    displayCalendar(startDate);
+  }, [startDate]);
+
+  /* 사용자 일정  */
+  const displayCalendar = async (startDate) => {
+    try {
+      const res = await axios.post("/api/user/getScheduleInfo", {
+        memberId: localStorage.getItem("member_id"),
+        startDate: format(startDate, "yyyy-MM-dd"),
+      });
+      if (res.data.success) {
+        const mappedEvents = res.data.result.map((value) => ({
+          id: value.cal_id,
+          title: value.cal_title,
+          start: value.start_date,
+          end: format(addDays(new Date(value.end_date), 1), "yyyy-MM-dd"),
+          allDay: true,
+          color: value.cal_color,
+        }));
+        setCalendar(mappedEvents);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   /* 일정 추가 팝업 오픈 */
   const addSchedulePop = (info) => {
     const clickedDate = new Date(info.dateStr);
@@ -31,6 +58,42 @@ function UserCalendar() {
     setEndDate(addDays(clickedDate, 3));
     setAddScheModalOpen(true);
     setModify(null);
+  };
+
+  /* 일정 추가 */
+  const addSchedule = async () => {
+    if (!newTitle.trim() || !startDate) {
+      return;
+    }
+
+    const newEvent = {
+      title: newTitle,
+      start: startDate,
+      end: format(addDays(endDate, 1), "yyyy-MM-dd"),
+      allDay: true,
+      color: selectedColor,
+    };
+
+    setCalendar((prev) => [...prev, newEvent]);
+    setNewTitle("");
+    setSelectedColor("#36c");
+    setAddScheModalOpen(false);
+
+    try {
+      const safeEndDate = endDate || startDate;
+      const res = await axios.post("/api/user/saveCalendar", {
+        memberId: localStorage.getItem("member_id"),
+        title: newTitle,
+        startDate: format(startDate, "yyyy-MM-dd"),
+        endDate: format(safeEndDate, "yyyy-MM-dd"),
+        selectedColor,
+      });
+      if (res.data.success) {
+        alert("저장되었습니다.");
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   /* 일정 수정 팝업 오픈 */
@@ -53,27 +116,6 @@ function UserCalendar() {
     setAddScheModalOpen(true);
   };
 
-  /* 일정 추가 */
-  const addSchedule = async () => {
-    if (!newTitle.trim() || !startDate) {
-      alert("일정을 입력해주세요.");
-      return;
-    }
-
-    const newEvent = {
-      title: newTitle,
-      start: startDate,
-      end: format(addDays(endDate, 1), "yyyy-MM-dd"),
-      allDay: true,
-      color: selectedColor,
-    };
-
-    setCalendar((prev) => [...prev, newEvent]);
-    setNewTitle("");
-    setSelectedColor("#36c");
-    setAddScheModalOpen(false);
-  };
-
   /* 일정 수정 */
   const modifySchedule = async () => {
     if (!modify) return;
@@ -91,15 +133,41 @@ function UserCalendar() {
       prev.map((event) => (event.id === modify.id ? modifyEvent : event))
     );
 
+    try {
+      const res = await axios.put("/api/user/modifyCalendar", {
+        id: modify.id,
+        title: newTitle,
+        startDate: format(startDate, "yyyy-MM-dd"),
+        endDate: format(endDate, "yyyy-MM-dd"),
+        selectedColor,
+      });
+      if (res.data.success) {
+        displayCalendar(startDate);
+      }
+    } catch (err) {
+      console.error("수정 실패:", err);
+    }
+
     setModify(null);
     setNewTitle("");
     setAddScheModalOpen(false);
   };
 
   /* 일정 삭제 */
-  const deleteSchedule = (e) => {
+  const deleteSchedule = async (e) => {
     if (confirm("삭제하시겠습니까?")) {
-      setCalendar((prev) => prev.filter((event) => event.id !== e.id));
+      try {
+        const res = await axios.delete("/api/user/deleteCalendar", {
+          data: { id: e.id },
+        });
+
+        if (res.data.success) {
+          setCalendar((prev) => prev.filter((event) => event.id !== e.id));
+          displayCalendar(startDate);
+        }
+      } catch (err) {
+        console.error(err);
+      }
     }
   };
 

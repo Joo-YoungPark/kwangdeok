@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const pool = require("./db");
+const { format } = require("date-fns"); // npm install date-fns
 
 router.post("/getMemberScore", async (req, res) => {
     const { id, date } = req.body;
@@ -61,5 +62,92 @@ router.post("/saveUserRecord", async (req, res) => {
   }
 });
 
+router.post("/saveCalendar", async (req, res) => {
+    const { memberId, title, startDate, endDate, selectedColor } = req.body;
+    
+    try {
+      const dateKey = format(new Date(startDate), "yyyyMMdd");
+
+      // const exsistCnt = await pool.query(
+      //   `SELECT COUNT(*) FROM calendar
+      //   WHERE member_id = $1 AND start_date = $2`,
+      //   [memberId, dateKey]
+      // )
+      // const count = parseInt(exsistCnt.rows[0].count);
+      // const newId = `${dateKey}_${count + 1}`;
+
+      const result = await pool.query(
+        `insert into calendar 
+        (cal_id, member_id, start_date, end_date, cal_title, cal_color) 
+        values (nextval('cal_seq'), $1, $2, $3, $4, $5)`,
+        [memberId, startDate, endDate, title, selectedColor]
+      );
+  
+      res.json({ success: true});
+    } catch (err) {
+      console.error("DB 오류:", err);
+      res.status(500).json({ success: false, message: "서버 오류" });
+    }
+  })
+
+  router.post("/getScheduleInfo", async (req, res) => {
+    const { memberId, startDate } = req.body;
+
+    const startDateMM = format(new Date(startDate), "yyyy-MM");
+
+    try {
+      const result = await pool.query(
+        `select 
+          cal_id, 
+          member_id, 
+          to_char(start_date, 'YYYY-MM-dd') as start_date, 
+          to_char(end_date, 'YYYY-MM-dd') as end_date, 
+          cal_title, 
+          cal_color 
+        from
+          calendar
+        where
+          member_id = $1
+          and to_char(start_date, 'YYYY-MM') = $2`,
+        [memberId, startDateMM]
+      );
+  
+      res.json({ success: true, result: result.rows });
+    } catch (err) {
+      console.error("DB 오류:", err);
+      res.status(500).json({ success: false, message: "서버 오류" });
+    }
+  
+  })
+
+  router.put("/modifyCalendar", async (req, res) => {
+    const { id, title, startDate, endDate, selectedColor } = req.body;
+
+    try {
+      await pool.query(
+        `UPDATE calendar
+         SET cal_title = $1, start_date = $2, end_date = $3, cal_color = $4
+         WHERE cal_id = $5`,
+        [title, startDate, endDate, selectedColor, id]
+      );
+      res.json({ success: true });
+    } catch (err) {
+      console.error("수정 실패:", err);
+      res.status(500).json({ success: false });
+    }
+  
+  })
+
+  router.delete("/deleteCalendar", async (req, res) => {
+    const { id } = req.body; // 또는 req.query.id 도 가능
+    console.log(id)
+    try {
+      await pool.query(`DELETE FROM calendar WHERE cal_id = $1`, [id]);
+      res.json({ success: true });
+    } catch (err) {
+      console.error("삭제 오류:", err);
+      res.status(500).json({ success: false });
+    }
+  });
 
   module.exports = router;
