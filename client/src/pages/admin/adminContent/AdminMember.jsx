@@ -4,6 +4,7 @@ import adminMemberStyle from "./AdminMember.module.css";
 import { BiDetail } from "react-icons/bi"; // npm install react-icons
 
 import RegistModal from "./RegistMemberPop.jsx";
+import EditModal from "./EditMemberPop.jsx";
 
 function AdminMember() {
   const [searchType, setSearchType] = useState("all");
@@ -11,7 +12,10 @@ function AdminMember() {
 
   const [members, setMembers] = useState([]);
   const [checked, setChecked] = useState([]);
+
   const [registModalOpen, setRegistModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editMemberData, setEditMemberData] = useState(null);
 
   useEffect(() => {
     searchMemberList();
@@ -33,8 +37,60 @@ function AdminMember() {
 
   /* 사원 등록 팝업 오픈 */
   const registMember = () => setRegistModalOpen(true);
+  // 사원 등록 팝업 닫기
   const closeModal = () => {
     setRegistModalOpen(false);
+    searchMemberList();
+  };
+
+  /* 사원 삭제 */
+
+  const deleteMember = async () => {
+    if (checked.length === 0) {
+      alert("삭제할 회원을 선택하세요.");
+      return;
+    }
+
+    if (confirm("선택한 회원을 삭제하시겠습니까?")) {
+      try {
+        const res = await axios.post("/api/admin/deleteMember", {
+          id: checked,
+        });
+        if (res.data.success) {
+          alert("삭제되었습니다.");
+          setChecked([]);
+          searchMemberList();
+        } else {
+          throw new Error("삭제 실패");
+        }
+      } catch (err) {
+        console.error("삭제 실패:", err);
+      }
+    }
+  };
+
+  /* 수정 팝업 열기 + 사원 정보 */
+  const editMember = async () => {
+    if (checked.length !== 1) {
+      alert("하나만 선택해주세요.");
+      return;
+    }
+
+    try {
+      const res = await axios.post("/api/admin/getMemberInfo", { id: checked });
+      if (res.data.success) {
+        setEditModalOpen(true);
+        setEditMemberData(res.data.member);
+      }
+    } catch (err) {
+      console.error("회원 정보 불러오기 실패:", err);
+    }
+  };
+
+  // 수정 팝업 닫기
+  const onCloseEditModal = () => {
+    setEditModalOpen(false);
+    setEditMemberData(null);
     searchMemberList();
   };
 
@@ -72,8 +128,8 @@ function AdminMember() {
           {/* 버튼 영역 */}
           <div className={adminMemberStyle["btn-area"]}>
             <button onClick={() => registMember()}>등록</button>
-            <button>삭제</button>
-            <button>수정</button>
+            <button onClick={deleteMember}>삭제</button>
+            <button onClick={editMember}>수정</button>
           </div>
 
           {/* 회원 목록 테이블 */}
@@ -147,6 +203,9 @@ function AdminMember() {
         </div>
       </div>
       {registModalOpen && <RegistModal onClose={closeModal} />}
+      {editModalOpen && (
+        <EditModal member={editMemberData} onClose={onCloseEditModal} />
+      )}
     </div>
   );
 }
