@@ -14,21 +14,39 @@ import AdminMain from "./pages/admin/AdminMain";
 import AdminRecord from "./pages/admin/adminContent/AdminRecord";
 import AdminMember from "./pages/admin/adminContent/AdminMember";
 
+import ProtectedRoute from "./components/ProtectedRoute"; // ✅ 추가
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Main />} />
         <Route path="/login" element={<Login />} />
-        {/* 유저 */}
-        <Route path="/user" element={<UserMain />}>
+
+        {/* 유저 (Protected) */}
+        <Route
+          path="/user"
+          element={
+            <ProtectedRoute>
+              <UserMain />
+            </ProtectedRoute>
+          }
+        >
           <Route index element={<Navigate to="userRecord" />} />
           <Route path="userRecord" element={<UserRecord />} />
           <Route path="calendar" element={<UserCalendar />} />
           <Route path="state" element={<UserState />} />
         </Route>
-        {/* 관리자 */}
-        <Route path="/admin" element={<AdminMain />}>
+
+        {/* 관리자 (Protected) */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <AdminMain />
+            </ProtectedRoute>
+          }
+        >
           <Route index element={<Navigate to="adminRecord" />} />
           <Route path="adminRecord" element={<AdminRecord />} />
           <Route path="member" element={<AdminMember />} />

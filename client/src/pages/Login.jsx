@@ -22,7 +22,7 @@ function LoginPage() {
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("member_id", res.data.id);
         localStorage.setItem("member_no", res.data.memberNo);
-        localStorage.setItem("role", res.data.role);
+        localStorage.setItem("name", res.data.name);
 
         navigate(res.data.memberNo === "000000" ? "/admin" : "/user");
 

@@ -8,9 +8,19 @@
 }
 
 .user-info {
-    font-size: 13px;
+    font-size: 1.3rem;
     text-align: right;
     line-height: 1.2;
+    cursor: pointer;
+    display: flex;
+}
+
+.logout_img{
+    margin-left: 10px;
+}
+
+.logout_text{
+    margin-top: 5px;
 }
 
 @media (max-width: 768px) {
@@ -26,5 +36,9 @@
 
     .header h2{
         font-size: 1.2rem;
+    }
+
+    .logout_text{
+     display: none;
     }
 }

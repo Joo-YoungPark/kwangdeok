@@ -26,7 +26,6 @@ function AdminRecord() {
       .then((res) => {
         if (res.data.success) {
           setNameOptions(res.data.members);
-          setMembers(res.data.members);
 
           return;
         }
