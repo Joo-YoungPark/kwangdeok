@@ -81,6 +81,11 @@ function AdminRecord() {
           scores.reduce((sum, cur) => sum + parseFloat(cur), 0) / scores.length
         ).toFixed(2);
 
+  /* 시수 삭제 이벤트 */
+  const removeRow = (index) => {
+    setScores((prev) => prev.filter((_, i) => i !== index));
+  };
+
   /* 시수 저장 버튼 클릭 */
   const saveRecord = async () => {
     if (memberId === null) {
@@ -195,7 +200,7 @@ function AdminRecord() {
                       <td>{index + 1}</td>
                       <td>{score}</td>
                       <td>
-                        <button>삭제</button>
+                        <button onClick={() => removeRow(index)}>삭제</button>
                       </td>
                     </tr>
                   ))}
