@@ -1,0 +1,133 @@
+body {
+  margin: 0;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+.record-page {
+  background-color: #f0f8ff;
+  min-height: 100vh;
+  padding-bottom: 60px;
+}
+
+.record-date {
+  display:flex;
+  padding: 16px;
+  font-weight: bold;
+  font-size: 16px;
+  width: 20%;
+}
+
+.record-date span{
+    padding-top: 10px;
+    padding-right: 10px;
+    width: 40%;
+}
+
+.record-save{
+  margin : 15px;
+}
+.record-datepicker-wapper{
+    width: 40%;
+}
+.record-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 auto;
+  background: white;
+}
+
+.record-table th,
+.record-table td {
+  border: 1px solid #aaa;
+  padding: 8px;
+  text-align: center;
+}
+
+.record-table thead {
+  background-color: #fff8dc;
+}
+
+.hit {
+  color: red;
+  font-weight: bold;
+}
+
+.summary {
+  background: white;
+  padding: 16px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.note-area {
+  background: white;
+  padding: 16px;
+}
+
+.note-area textarea {
+  width: 100%;
+  height: 80px;
+  resize: none;
+  margin-top: 6px;
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.note-area button {
+  margin-top: 12px;
+  width: 100%;
+  padding: 10px;
+  background-color: tomato;
+  color: white;
+  font-weight: bold;
+}
+
+.plusTable{
+  text-align: center;
+  padding: 20px;
+}
+
+.plusTableBtn {
+  padding: 11px 17px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: none;
+  background-color: rgb(90, 103, 216);
+  color: white;
+  cursor: pointer;
+}
+
+.record-container{
+  display: flex;
+  justify-content: flex-start;
+}
+
+.record-stat{
+  font-size: 0.85rem
+}
+.react-datepicker-wrapper input {
+    width: 40% !important;
+}
+
+
+@media (max-width: 768px) {
+    .record-date {
+        display: flex;
+        padding: 16px;
+        font-weight: bold;
+        font-size: 14px;
+        width: 55%;
+    }
+
+    .record-date span {
+        padding-top: 10px;
+        padding-right: 10px;
+        width: 40%;
+    }
+
+    .record-datepicker-wapper {
+        width: 40%;     
+    }
+}
