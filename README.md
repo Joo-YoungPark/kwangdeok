@@ -62,6 +62,8 @@
 
 ## [ERD 데이터 모델링]
 
+![Image](https://github.com/user-attachments/assets/5bae66b5-84e2-4ae1-83df-31c0844d3fd3)
+
 ## [Truble Shooting]
 
 ## [느낀점]
