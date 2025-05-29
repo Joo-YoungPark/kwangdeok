@@ -16,16 +16,28 @@ import "../../../css/Calendar.css";
 
 function UserCalendar() {
   const [calendar, setCalendar] = useState([]);
-  const [addScheModalOpen, setAddScheModalOpen] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
-  const [selectedColor, setSelectedColor] = useState("#36c");
+  const [selectedColor, setSelectedColor] = useState("#ffebc2");
   const [modify, setModify] = useState(null);
+
+  const [addScheModalOpen, setAddScheModalOpen] = useState(false);
 
   useEffect(() => {
     displayCalendar(startDate);
   }, [startDate]);
+
+  useEffect(() => {
+    if (addScheModalOpen && modify) {
+      const inputEl = document.querySelector(
+        ".react-datepicker__input-container input"
+      );
+      if (inputEl) {
+        inputEl.style.backgroundColor = selectedColor;
+      }
+    }
+  }, [addScheModalOpen, modify, selectedColor]);
 
   /* 사용자 일정  */
   const displayCalendar = async (startDate) => {
@@ -76,7 +88,7 @@ function UserCalendar() {
 
     setCalendar((prev) => [...prev, newEvent]);
     setNewTitle("");
-    setSelectedColor("#36c");
+    setSelectedColor("#ffebc");
     setAddScheModalOpen(false);
 
     try {
@@ -101,18 +113,20 @@ function UserCalendar() {
     const event = clickInfo.event;
     const modDay = addDays(new Date(event.end), -1);
 
+    console.log(event.backgroundColor);
+    console.log(event.color);
     setModify({
       id: event.id,
       title: event.title,
       start: new Date(event.start),
       end: modDay,
-      color: event.backgroundColor || event.color || "#36c",
+      color: event.backgroundColor,
     });
 
     setNewTitle(event.title);
     setStartDate(new Date(event.start));
     setEndDate(modDay);
-    setSelectedColor(event.backgroundColor || event.color || "#36c");
+    setSelectedColor(event.backgroundColor);
     setAddScheModalOpen(true);
   };
 
