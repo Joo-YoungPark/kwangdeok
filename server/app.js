@@ -15,7 +15,6 @@ app.use("/api/admin", adminRouter);
 // 로그인
 app.post('/api/login', async (req, res) => {
     const { id, password } = req.body;
-    console.log("받은 로그인 요청:", id, password);
   
     try {
       const result = await pool.query(

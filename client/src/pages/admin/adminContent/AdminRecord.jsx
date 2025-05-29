@@ -81,6 +81,32 @@ function AdminRecord() {
           scores.reduce((sum, cur) => sum + parseFloat(cur), 0) / scores.length
         ).toFixed(2);
 
+  /* 시수 저장 버튼 클릭 */
+  const saveRecord = async () => {
+    if (memberId === null) {
+      alert("존재하지 않는 사원입니다.");
+      return;
+    }
+    try {
+      await axios.post("/api/admin/saveRecord", {
+        date: format(date, "yyyy-MM-dd"),
+        year: date.getFullYear(),
+        month: date.getMonth() + 1,
+        day: date.getDate(),
+        searchName,
+        avg,
+        memberId,
+      });
+      alert("등록되었습니다.");
+      setSearchName("");
+      setMemberId("");
+      setScore("");
+      setScores([]);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <div className="record-page">
       <div className={adminRecordStyle["record-container"]}>
@@ -178,7 +204,9 @@ function AdminRecord() {
             </div>
           </div>
           <div className={adminRecordStyle["score-btn-area"]}>
-            <button className="btn">저장</button>
+            <button className="btn" onClick={saveRecord}>
+              저장
+            </button>
           </div>
         </div>
       </div>
