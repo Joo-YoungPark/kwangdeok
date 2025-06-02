@@ -10,7 +10,8 @@ function UserTab({ layout }) {
     { label: "습사기록", path: "UserRecord", icon: "📝" },
     { label: "습사달력", path: "calendar", icon: "📅" },
     { label: "습사통계", path: "state", icon: "📈" },
-    { label: "활터정보", path: "place", icon: "📈" },
+    { label: "활터정보", path: "state", icon: "📈" },
+    // { label: "상세기록", path: "calendar", icon: "📄" },
   ];
 
   return (

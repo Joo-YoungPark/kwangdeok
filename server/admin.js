@@ -221,7 +221,6 @@ router.post("/getMonthScore", async (req, res) => {
     ORDER BY m;
   `;
 
-  console.log(query)
   try{
     const result = await pool.query(query, [id]);
 
