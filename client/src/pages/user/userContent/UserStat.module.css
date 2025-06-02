@@ -1,0 +1,95 @@
+.stat_page{
+    /* background-color: #f0f8ff; */
+    /* min-height: 100vh; */
+    min-height: auto;
+    padding-bottom: 60px;
+}
+
+.stat_container{
+    padding: 15px;
+}
+
+.stat_header{
+    display:flex;
+    gap: 1rem;
+}
+
+.stat_header select{
+    width:100px;
+}
+
+.stat_header span{
+    font-size: 1.2rem;
+    margin: auto 0px;
+}
+
+.stat_header select{
+    width: 150px;
+    padding: 10px 14px;
+    font-size: 16px;
+    border: 2px solid #4fc3f7;
+    border-radius: 8px;
+    outline: none;
+    transition: 0.3s;
+}
+
+.stat_content{
+    padding: 20px;
+}
+
+.stat_chartArea{
+    display: flex;
+    width:100%;
+    height: 500px;
+    /* border: 1px solid black; */
+}
+
+.stat_chart1{
+    width: 70%;
+    height: 500px;
+    margin: 10px;
+    transform: none;
+}
+
+.stat_chart1 canvas{
+
+    width:63vw !important;
+    height: 55vh !important;
+
+}
+.stat_chart2{
+    width: 30%;
+    height: auto;
+    margin: 20px;
+    overflow-y: auto;
+}
+
+.chart2_table>thead {
+    background-color: #dbeeff;
+}
+
+.chart2_table>thead>tr>th {
+    font-size: 1.2rem;
+    font-weight: 700;
+    padding: 5px;
+}
+
+.chart2_table>tbody{
+    text-align: center;
+    font-size: 1.1rem;
+}
+
+.chart2_table>tbody>tr>td{
+    padding: 5px;
+}
+
+@media (max-width: 768px) {
+
+.stat_header select{
+    width: 30vw;
+    padding: 8px 5px;
+    font-size: 16px;
+ 
+}
+
+}

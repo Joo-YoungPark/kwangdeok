@@ -150,4 +150,68 @@ router.post("/saveCalendar", async (req, res) => {
     }
   });
 
+  router.post("/getStatData1", async (req, res) => {
+    const { memberId, start, end, formattedList } = req.body;
+  
+    console.log(memberId, start, end, formattedList)
+    console.log()
+  
+    let subAvg = '';
+    let subSum = '';
+    for(let i=0; i<formattedList.length; i++){
+      
+      subAvg += `,coalesce(sum(case when TO_CHAR(record_date, 'YYYY-MM') = '${formattedList[i]}' then (record_1 + record_2 + record_3 + record_4 + record_5) else null end)::float /
+                        SUM(case when TO_CHAR(record_date, 'YYYY-MM') = '${formattedList[i]}' then 1 else 0 end), 0) as "${formattedList[i]}"`;
+
+      subSum += `,sum(case when record_date = '${formattedList[i]}' then 1 else 0 end) as "${formattedList[i]}"`
+    }  
+  
+
+    const query = `
+      (select
+        '평균시수' as label
+        ${subAvg}
+        from
+            member_score
+          where
+            record_date between $2 and $3
+            and member_id = $1)
+        union all
+      (select
+        '습사량' as label
+        ${subSum}
+        from (	
+          select 
+            TO_CHAR(record_date, 'YYYY-MM') as record_date
+          from 
+            member_score
+          where
+            record_date between $2 and $3
+            and member_id = $1
+          group by
+            record_date))
+    `;
+  
+    console.log(query);
+    try{
+      const result = await pool.query(query, [memberId, start, end ]);
+      const table = await pool.query(`select
+                    member_id,
+                    TO_CHAR(record_date, 'YYYY-MM-dd') as record_date,
+                    count(*) as round_count,
+                    sum (record_1 + record_2 + record_3 + record_4 + record_5) as total_hit,
+                    ROUND((SUM(record_1 + record_2 + record_3 + record_4 + record_5)::float / COUNT(*))::numeric, 2) as avg_hit
+                  from
+                     member_score 
+                  where member_id = $1 and record_date between $2 and $3
+                  group by member_id, record_date
+                  order by record_date ` , [memberId, start, end ])
+  
+      res.json({ success: true, list: result.rows, table:table.rows });
+    }catch(err){
+      console.error("실패:", err); 
+      res.status(500).json({ message: "서버 오류" });
+    }
+  })
+
   module.exports = router;
