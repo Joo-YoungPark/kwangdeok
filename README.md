@@ -3,7 +3,7 @@
 반복적인 수작업으로 인한 입력 오류와 업무 비효율을 해결하기 위해, <br>
 동호회 엑셀 입력 업무를 자동화하고 개인 시수를 입력해 통계를 볼 수 있는 시스템 개발
 
-**개발 기간 [2025.05.03 - 2025.05.31]**
+**개발 기간 [2025.05.16 - 2025.06.11]**
 
 ---
 
@@ -58,12 +58,19 @@
 
 ## [사용한 기술]
 
-- react, node.js, Postgresql, GitHub
+- Frontend: React (with Vite), JavaScript, HTML/CSS
+
+- Backend: Node.js (Express)
+
+- Database: PostgreSQL
+
+- Deployment: AWS RDS, CloudType
+
+- Version Control: Git, GitHub
+
+- 지도 API: Kakao Maps JavaScript API
 
 ## [ERD 데이터 모델링]
 
 ![Image](https://github.com/user-attachments/assets/5bae66b5-84e2-4ae1-83df-31c0844d3fd3)
 
-## [Truble Shooting]
-
-## [느낀점]
