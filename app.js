@@ -6,7 +6,10 @@ const bcrypt = require("bcrypt");
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-app.use(cors());
+app.use(cors({
+  origin: 'https://kwangdeok-client.cloudtype.app',
+  credentials: true
+}));
 app.use(express.json());
 
 // admin 라우터 추가
