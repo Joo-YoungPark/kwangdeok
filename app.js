@@ -7,7 +7,7 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(cors({
-  origin: 'https://kwangdeok-client.cloudtype.app',
+  origin: "https://web-kwangdeok-client-mbp0aia4ba4609a4.sel4.cloudtype.app",
   credentials: true
 }));
 app.use(express.json());
