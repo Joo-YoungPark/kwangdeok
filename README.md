@@ -58,7 +58,7 @@
 
 ## [사용한 기술]
 
-- Frontend: React (with Vite), JavaScript, HTML/CSS
+- Frontend: React (with Vite), JavaScript, HTML/CSS, Tailwind
 
 - Backend: Node.js (Express)
 
