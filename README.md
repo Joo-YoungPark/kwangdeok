@@ -72,5 +72,5 @@
 
 ## [ERD 데이터 모델링]
 
-![Image](https://github.com/user-attachments/assets/5bae66b5-84e2-4ae1-83df-31c0844d3fd3)
+![Image](https://github.com/user-attachments/assets/8b360b2b-d4dc-43cc-9134-b0d03f22118a)
 
