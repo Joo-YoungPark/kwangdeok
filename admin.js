@@ -50,11 +50,10 @@ router.post("/saveRecord", async (req, res) => {
 
 // 사원 목록
 router.get("/getMemberList", async (req, res) => {
-  const { searchType, searchKeyword, page = 1, size = 5 } = req.query;
+  const { searchType, searchKeyword, orderType, page = 1, size = 5 } = req.query;
 
   const offset = (page - 1) * size;
   const limit = parseInt(size);
-
   let sql = `SELECT member_id, name, member_no,
                     CASE WHEN handle = 1 THEN '우궁'
                          WHEN handle = -1 THEN '좌궁' ELSE '-' END AS handle,
@@ -82,10 +81,17 @@ router.get("/getMemberList", async (req, res) => {
     sql += " AND role ILIKE $" + (params.length + 1);
     params.push(`%${searchKeyword}%`);
   }
-  
-  sql += ` ORDER BY member_id LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
-  params.push(limit, offset);
 
+  if(orderType === 'memberNo'){
+    sql += " ORDER BY member_no";
+  }else if(orderType === 'name'){
+    sql += " ORDER BY name";
+  }else if(orderType === 'score'){
+    sql += " ORDER BY avg_score desc";
+  }
+
+  sql += ` LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
+  params.push(limit, offset);
   try {
     const result = await pool.query(sql, params);
     const countResult = await pool.query(`SELECT COUNT(*) FROM member WHERE 1=1 AND member_no != '000000'`);

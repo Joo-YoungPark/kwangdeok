@@ -8,6 +8,7 @@ const PORT = process.env.PORT || 3001;
 
 const allowedOrigins = [
   "http://localhost:5173",
+  "http://192.168.45.139:5173",
   "https://web-kwangdeok-client-mbp0aia4ba4609a4.sel4.cloudtype.app"
 ];
 
@@ -60,7 +61,7 @@ app.post('/api/login', async (req, res) => {
   
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
-        return res.status(401).json({ message: "비밀번호가 일치하지 않습니다." });
+        return res.status(402).json({ message: "비밀번호가 일치하지 않습니다." });
       }
   
       res.json({
