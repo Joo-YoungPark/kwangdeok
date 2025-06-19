@@ -20,8 +20,7 @@ https://web-kwangdeok-client-mbp0aia4ba4609a4.sel4.cloudtype.app/
 2. [추가 구현하고 싶은 기능](#추가-구현하고-싶은-기능)
 3. [사용한 기술](#사용한-기술)
 4. [ERD 데이터 모델링](#erd-데이터-모델링)
-5. [Troble Shooting](#truble-shooting)
-6. [느낀점](#느낀점)
+
 
 ## [프로그램 주요 기능]
 
