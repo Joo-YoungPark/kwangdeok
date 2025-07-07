@@ -6,6 +6,8 @@
 **개발 기간 [2025.05.16 - 2025.06.10]**
 
 https://web-kwangdeok-client-mbp0aia4ba4609a4.sel4.cloudtype.app/
+관리자 ID/PW : admin/1234
+사용자 ID/PW : test/test
 ---
 
 ### 목차
